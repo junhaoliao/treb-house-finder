@@ -19,7 +19,7 @@ parameters = {
     "availability": "A",
     "bedrooms": ["2", "3", "4", ">=5"],
     "bathrooms": ["2", "3", "4", ">=5"],
-    "totalParkingSpaces": ["1","2", "3", "4", ">=5"],
+    "totalParkingSpaces": ["1", "2", "3", "4", ">=5"],
     "saleOrRent": ["RENT", "SUB-RENT"]
 }
 
@@ -33,10 +33,14 @@ NEW_LIST = []
 LAST_FRESH_TIME = datetime.now()
 
 
-def get_new_house():
+def get_new_house(parking=1):
     global OLD_LIST, NEW_LIST
     OLD_LIST += NEW_LIST
     NEW_LIST = []
+
+    parameters['totalParkingSpaces'] = ["2", "3", "4", ">=5"]
+    if parking == 1:
+        parameters['totalParkingSpaces'] = ["1"]
 
     resp = requests.get(url=url, params=parameters, headers=headers)
     data = resp.json()
@@ -48,11 +52,11 @@ def get_new_house():
     return NEW_LIST
 
 
-def get_new_house_text():
-    t = 'New Listings with 1 Parkings ' + f"(since {LAST_FRESH_TIME})"
+def get_new_house_text(parking=1):
+    t = f'New Listings with {parking} Parkings ' + f"(since {LAST_FRESH_TIME})"
     b = '<h2>' + t + '</h2><br>'
 
-    new_houses = get_new_house()
+    new_houses = get_new_house(parking)
 
     for s in new_houses:
         b += '🏘️\t' + '<b><a href="https://onlistings.trreb.ca/listings/' + s['_id'] + '">' + s['_id'] + '</a></b><br>'
@@ -98,11 +102,18 @@ def send_email(to_email, subject, body):
 
 
 while True:
-    count, title, the_body = get_new_house_text()
+    # TODO: read from a list to check given numbers of parking spaces
+    count1, _, body1 = get_new_house_text(1)
+    count2, _, body2 = get_new_house_text(2)
+
+    title = f'New Listings ' + f"(since {LAST_FRESH_TIME})"
+
+    count = count1 + count2
     if count == 0:
         print('script still alive', datetime.now())
     else:
-        send_email('example@example.com', title, the_body)
+        send_email('example@example.com', title, body1 + '<br>' + body2)
+        # print(body1 + body2)
         LAST_FRESH_TIME = datetime.now()
 
     time.sleep(10 * 60)
