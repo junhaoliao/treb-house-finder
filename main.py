@@ -12,14 +12,14 @@ url = 'https://onlistings.trreb.ca/listings'
 
 parameters = {
     "orderby": "price",
-    "latitude": [">=43.828269565293496", "<=43.851484995667896"],
-    "longitude": [">=-79.39748651506495", "<=-79.3507946205337"],
+    "latitude": [">=43.827248", "<=43.858194"],
+    "longitude": [">=-79.403235", "<=-79.326409"],
     "gid": "treb",
     "class": ["FREE", "CONDO"],
     "availability": "A",
     "bedrooms": ["2", "3", "4", ">=5"],
-    "bathrooms": ["2", "3", "4", ">=4"],
-    "totalParkingSpaces": ["2", "3", "4", ">=5"],
+    "bathrooms": ["2", "3", "4", ">=5"],
+    "totalParkingSpaces": ["1","2", "3", "4", ">=5"],
     "saleOrRent": ["RENT", "SUB-RENT"]
 }
 
@@ -49,7 +49,7 @@ def get_new_house():
 
 
 def get_new_house_text():
-    t = 'New Listings with 2 Parkings ' + f"(since {LAST_FRESH_TIME})"
+    t = 'New Listings with 1 Parkings ' + f"(since {LAST_FRESH_TIME})"
     b = '<h2>' + t + '</h2><br>'
 
     new_houses = get_new_house()
